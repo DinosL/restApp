@@ -1,0 +1,5 @@
+Flask
+SQLAlchemy
+Flask-JWT-Extended
+pytest
+pytest-cov
