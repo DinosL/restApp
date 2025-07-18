@@ -3,6 +3,8 @@ from flask_jwt_extended import JWTManager, create_access_token
 from app.db import db
 from app.models import User
 import os
+from app.routes import app_bp
+
 
 jwt = JWTManager()
 
@@ -20,18 +22,10 @@ def create_app():
 
 
     with app.app_context():
-        print("====                 Creating DB")
         db.create_all()
+        
+    app.register_blueprint(app_bp, url_prefix='/tasks')
 
-
-    # @app.route("/")
-    # def hello_world():
-    #     return "<p>Hello, World!</p>"
-
-    @app.route('/')
-    def home():
-        return render_template('templates/login.html')
-    
     @app.route("/register", methods=["POST"])
     def register():
         data = request.get_json()
@@ -56,9 +50,10 @@ def create_app():
         if not user or not user.check_password(data["password"]):
             return jsonify({"msg": "Invalid credentials"}), 401
 
-        access_token = create_access_token(identity=user.id)
+        # access_token = create_access_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
         return jsonify(access_token=access_token), 200
-    
-    
 
+    
+    
     return app
