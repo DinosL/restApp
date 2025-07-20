@@ -6,13 +6,12 @@ A Flask-based REST API for managing user tasks with JWT authentication.
 
 ## Setup Instructions
 
-### 1. Python Environment
 
 1. **Clone the repo:**
 
    ```
-   git clone https://github.com/yourusername/yourrepo.git
-   cd yourrepo
+   git clone https://github.com/DinosL/restApp.git
+   cd restAPP
 
 2. **Create and activate a virtual environment:**
 
