@@ -54,7 +54,9 @@ The API is documented with Swagger UI, accesible at:
 # Decisions & Assumptions
 - JWT Authentication: Secure token-based authentication is used for stateless session management.
 
-- SQLite by default: For simplicity and easy setup, SQLite is the default database; environment variable support allows easy switch to other DBs.
+- SQLite as default: For simplicity and easy setup, SQLite is the default database; environment variable support allows easy switch to other DBs.
+
+- SQLAlchemy ORM: The app uses SQLAlchemy to interact with the database.
 
 - Blueprints: Tasks routes are modularized using Flask Blueprints for better organization.
 
@@ -66,4 +68,6 @@ The API is documented with Swagger UI, accesible at:
 
 - Continuous Intgration: Github Actions is used for basic continuous integration. It automatically runs tests and checks code quality on every push and pull request to the main branch to ensure stability.
 
-- Assumptions: Usernames are unique. Only authenticated users can manipulate their own tasks.
+- Assumptions: 
+    - Usernames are unique
+    - Only authenticated users can manipulate their own tasks
