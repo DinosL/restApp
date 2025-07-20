@@ -9,6 +9,29 @@ app_bp = Blueprint("tasks", __name__)
 @app_bp.route("/", methods=["GET"])
 @jwt_required()
 def get_tasks():
+    """
+    Get all tasks for the authenticated user.
+    ---
+    tags:
+      - Tasks
+    responses:
+      200:
+        description: List of tasks
+        schema:
+          type: array
+          items:
+            properties:
+              id:
+                type: integer
+              description:
+                type: string
+              due_date:
+                type: string
+              is_completed:
+                type: boolean
+              created_at:
+                type: string
+    """
     user_id = int(get_jwt_identity())
     tasks = Task.query.filter_by(user_id=user_id).all()
     return jsonify([
@@ -24,6 +47,31 @@ def get_tasks():
 @app_bp.route("/", methods=["POST"])
 @jwt_required()
 def create_task():
+    """
+    Create a new task for the authenticated user.
+    ---
+    tags:
+      - Tasks
+    security:
+      - BearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              description:
+                type: string
+              due_date:
+                type: string
+              is_completed:
+                type: boolean
+    responses:
+      201:
+        description: Task created
+      400:
+        description: Missing or invalid input
+    """
     user_id = int(get_jwt_identity())
     data = request.get_json()
 
@@ -55,6 +103,40 @@ def create_task():
 @app_bp.route("/<int:task_id>", methods=["PUT"])
 @jwt_required()
 def update_task(task_id):
+    """
+    Update an existing task.
+    ---
+    tags:
+      - Tasks
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              description:
+                type: string
+              due_date:
+                type: string
+              is_completed:
+                type: boolean
+    responses:
+      200:
+        description: Task updated
+      400:
+        description: Invalid input
+      404:
+        description: Task not found
+    """
+
     user_id = int(get_jwt_identity())
     task = Task.query.filter_by(id=task_id, user_id=user_id).first()
     if not task:
@@ -79,6 +161,25 @@ def update_task(task_id):
 @app_bp.route("/<int:task_id>", methods=["DELETE"])
 @jwt_required()
 def delete_task(task_id):
+    """
+    Delete a task by ID.
+    ---
+    tags:
+      - Tasks
+    security:
+      - BearerAuth: []
+    parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+    responses:
+      200:
+        description: Task deleted
+      404:
+        description: Task not found
+    """
     user_id = int(get_jwt_identity())
     task = Task.query.filter_by(id=task_id, user_id=user_id).first()
     if not task:

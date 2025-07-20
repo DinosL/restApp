@@ -4,6 +4,7 @@ from app.db import db
 from app.models import User
 import os
 from app.routes import app_bp
+from flasgger import Swagger
 
 
 jwt = JWTManager()
@@ -16,6 +17,17 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = "secret-key" # CHANGE
 
     app.json.compact = False
+    # Swagger(app)
+    Swagger(app, template={
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: 'Authorization: Bearer {token}'"
+        }
+    }
+})
 
     db.init_app(app)         
     jwt.init_app(app)    
@@ -23,11 +35,34 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        
+
     app.register_blueprint(app_bp, url_prefix='/tasks')
 
     @app.route("/register", methods=["POST"])
     def register():
+        """
+    Register a new user.
+    ---
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+    responses:
+      201:
+        description: User created successfully
+      400:
+        description: Missing username or password
+      409:
+        description: User already exists
+    """
         data = request.get_json()
         if not data or not data.get("username") or not data.get("password"):
             return jsonify({"msg": "Missing username or password"}), 400
@@ -44,6 +79,36 @@ def create_app():
 
     @app.route("/login", methods=["POST"])
     def login():
+        """
+    Log in a user and get a JWT access token.
+    ---
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+    responses:
+      200:
+        description: Successful login with access token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                access_token:
+                  type: string
+      401:
+        description: Invalid credentials
+    """
+        
         data = request.get_json()
         user = User.query.filter_by(username=data["username"]).first()
 
