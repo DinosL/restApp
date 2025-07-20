@@ -7,7 +7,7 @@ def test_register(client):
     assert res.get_json()["msg"] == "User created"
 
 def test_login_success(client):
-    client.post("/register", json={"username": "loginuser", "password": "loginpass"})
+    client.post("/register", json={"username": "user1", "password": "123456"})
     res = client.post("/login", json={
         "username": "user1",
         "password": "123456"

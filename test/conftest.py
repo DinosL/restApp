@@ -31,8 +31,8 @@ def client(app):
 
 @pytest.fixture
 def test_user():
-    user = User(username="testuser")
-    user.set_password("testpass")
+    user = User(username="user1")
+    user.set_password("123456")
     _db.session.add(user)
     _db.session.commit()
     return user
